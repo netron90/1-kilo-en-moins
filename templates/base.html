@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}1 Kilo en Moins{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="navbar-logo">
+            <a href="{% url 'home' %}">
+                <img src="{% static 'images/logo.png' %}" alt="1 Kilo en Moins" height="70" />
+            </a>
+        </div>
+        <div class="navbar-links">
+            <a href="{% url 'home' %}"
+                class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+                Motivation
+            </a>
+            <a href="{% url 'reussites' %}"
+                class="nav-link {% if request.resolver_match.url_name == 'reussites' %}active{% endif %}">
+                Réussites
+            </a>
+        </div>
+    </nav>
+
+    <!-- CONTENU PRINCIPAL -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-logo">
+            <img src="{% static 'images/logo.png' %}" alt="1 Kilo en Moins" height="80" />
+        </div>
+        <div class="footer-copy">
+            <em>© 2010-2026 Tout droit réservé</em>
+        </div>
+    </footer>
+
+    {% block extra_js %}{% endblock %}
+
+</body>
+
+</html>

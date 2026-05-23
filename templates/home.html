@@ -1,0 +1,407 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Accueil — 1 Kilo en Moins{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="hero">
+    <h1 class="hero-title">Focalise toi chaque jour sur</h1>
+    <h2 class="hero-sub">Ton objectif</h2>
+</section>
+
+<!-- TABS FITNESS / DANCE -->
+<section class="tabs-section">
+    <div class="tabs">
+        <button class="tab active" data-target="fitness">Fitness</button>
+        <button class="tab" data-target="dance">Dance</button>
+    </div>
+
+    <!-- CAROUSEL FITNESS -->
+    <!-- CAROUSEL FITNESS -->
+    <div class="carousel" id="fitness">
+        <div class="carousel-wrapper">
+            <div class="swipe-zone-left"></div>
+            <div class="swipe-zone-right"></div>
+            <div class="carousel-track">
+                {% for video in videos_fitness %}
+                <div class="carousel-item">
+                    <iframe src="https://www.tiktok.com/embed/v2/{{ video.tiktok_id }}" width="325" height="580"
+                        frameborder="0" scrolling="no" allowfullscreen style="border-radius:12px; display:block;">
+                    </iframe>
+                </div>
+                {% empty %}
+                <p class="empty-msg">Aucune vidéo disponible.</p>
+                {% endfor %}
+            </div>
+        </div>
+        {% if videos_fitness|length > 1 %}
+        <div class="carousel-btns">
+            <button class="btn-circle prev" data-carousel="fitness">&#8249;</button>
+            <button class="btn-circle next" data-carousel="fitness">&#8250;</button>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- CAROUSEL DANCE -->
+    <div class="carousel hidden" id="dance">
+        <div class="carousel-wrapper">
+            <div class="swipe-zone-left"></div>
+            <div class="swipe-zone-right"></div>
+            <div class="carousel-track">
+                {% for video in videos_dance %}
+                <div class="carousel-item">
+                    <iframe src="https://www.tiktok.com/embed/v2/{{ video.tiktok_id }}" width="325" height="580"
+                        frameborder="0" scrolling="no" allowfullscreen style="border-radius:12px; display:block;">
+                    </iframe>
+                </div>
+                {% empty %}
+                <p class="empty-msg">Aucune vidéo disponible.</p>
+                {% endfor %}
+            </div>
+        </div>
+        {% if videos_dance|length > 1 %}
+        <div class="carousel-btns">
+            <button class="btn-circle prev" data-carousel="dance">&#8249;</button>
+            <button class="btn-circle next" data-carousel="dance">&#8250;</button>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- TASKLIST -->
+<section class="tasklist-section">
+    <div class="tasklist-header">
+        <span class="tasklist-title">Défis de la semaine</span>
+    </div>
+    <ul class="tasklist">
+        {% for defi in defis %}
+        <li class="task-item {% if defi.accompli %}done{% endif %}">
+            <span class="task-text">{{ defi.texte }}</span>
+            {% if defi.accompli %}
+            {% if defi.accompli %}
+            <span style="
+            width:28px; height:28px; min-width:28px;
+            border-radius:50%;
+            background:#3aaa5c;
+            color:white;
+            font-weight:700;
+            font-size:14px;
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            margin-left:auto;
+        ">✓</span>
+            {% endif %}
+            {% endif %}
+        </li>
+        {% empty %}
+        <li class="task-item">
+            <span class="task-text" style="color:#aaa;">Aucun défi pour le moment.</span>
+        </li>
+        {% endfor %}
+    </ul>
+</section>
+
+<!-- SUPPORT -->
+<section class="support-section">
+    <p class="support-text">
+        Ce que je fais te motive ou t'aide à atteindre tes objectifs ?<br />
+        Support moi 😊 !
+    </p>
+    <a href="#" class="btn-green">Soutenir le projet</a>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<style>
+    .carousel-track {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem 0;
+        overflow: visible;
+    }
+
+    .carousel {
+        overflow: hidden;
+        position: relative;
+        padding: 1rem 0;
+    }
+
+    .carousel-item {
+        flex-shrink: 0;
+        border-radius: 12px;
+        overflow: hidden;
+        transition: transform 0.4s ease, opacity 0.4s ease;
+        opacity: 0.4;
+        transform: scale(0.82);
+        position: absolute;
+    }
+
+    .carousel-item.active {
+        opacity: 1;
+        transform: scale(1);
+        z-index: 2;
+    }
+
+    .carousel-item.left-1 {
+        opacity: 0.5;
+        transform: scale(0.85);
+        z-index: 1;
+    }
+
+    .carousel-item.right-1 {
+        opacity: 0.5;
+        transform: scale(0.85);
+        z-index: 1;
+    }
+
+    .carousel-item.left-2,
+    .carousel-item.right-2 {
+        opacity: 0.25;
+        transform: scale(0.7);
+        z-index: 0;
+    }
+
+    .carousel-item.hidden-item {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .carousel-wrapper {
+        position: relative;
+        height: 620px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    @media (max-width: 768px) {
+        .carousel-wrapper {
+            height: 500px;
+        }
+
+        .carousel-item iframe {
+            width: 260px !important;
+            height: 460px !important;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .carousel-wrapper {
+            height: 420px;
+        }
+
+        .carousel-item iframe {
+            width: 220px !important;
+            height: 390px !important;
+        }
+    }
+
+    .carousel-item::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 3;
+        cursor: grab;
+    }
+
+    .carousel-item.active::after {
+        display: none;
+        /* La vidéo active reste cliquable */
+    }
+
+    .swipe-zone-left,
+    .swipe-zone-right {
+        position: absolute;
+        top: 0;
+        width: 25%;
+        /* ← plus large */
+        height: 100%;
+        z-index: 10;
+        cursor: pointer;
+        user-select: none;
+        /* ← empêche la sélection */
+        -webkit-user-select: none;
+        /* border: #3aaa5c 2px solid; */
+    }
+
+    .swipe-zone-left {
+        left: 0;
+    }
+
+    .swipe-zone-right {
+        right: 0;
+    }
+</style>
+
+<script>
+    // ── Tabs ──────────────────────────────────
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            document.querySelectorAll('.carousel').forEach(c => c.classList.add('hidden'));
+            document.getElementById(tab.dataset.target).classList.remove('hidden');
+        });
+    });
+
+    // ── Carousel Roue Infinie ─────────────────
+    function initCarousel(carouselId, startIndex) {
+        const carousel = document.querySelector(`#${carouselId}`);
+        const wrapper = carousel.querySelector('.carousel-wrapper');
+        const items = carousel.querySelectorAll('.carousel-item');
+        if (items.length === 0) return;
+
+        const n = items.length;
+        let current = startIndex;
+
+        // Largeur et positions
+        const ITEM_W = 325;
+        const GAP = 24;
+        const POSITIONS = {
+            'active': 0,
+            'right-1': ITEM_W + GAP,
+            'right-2': (ITEM_W + GAP) * 2,
+            'left-1': -(ITEM_W + GAP),
+            'left-2': -(ITEM_W + GAP) * 2,
+        };
+
+        function getClass(offset) {
+            switch (offset) {
+                case 0: return 'active';
+                case 1: return 'right-1';
+                case -1: return 'left-1';
+                case 2: return 'right-2';
+                case -2: return 'left-2';
+                default: return 'hidden-item';
+            }
+        }
+
+
+
+        function update() {
+            const isMobile = window.innerWidth <= 768;
+            const MOBILE_ITEM_W = window.innerWidth <= 480 ? 220 : 260;
+            const currentItemW = isMobile ? MOBILE_ITEM_W : ITEM_W;
+            const currentGap = GAP;
+
+            const mobilePositions = {
+                'active': 0,
+                'right-1': currentItemW + currentGap,
+                'right-2': (currentItemW + currentGap) * 2,
+                'left-1': -(currentItemW + currentGap),
+                'left-2': -(currentItemW + currentGap) * 2,
+            };
+
+            const positions = isMobile ? mobilePositions : POSITIONS;
+
+            items.forEach((item, i) => {
+                let offset = i - current;
+                if (offset > n / 2) offset -= n;
+                if (offset < -n / 2) offset += n;
+
+                item.classList.remove('active', 'left-1', 'left-2', 'right-1', 'right-2', 'hidden-item');
+
+                const cls = getClass(offset);
+                item.classList.add(cls);
+
+                const pos = positions[cls] ?? 0;
+                item.style.transform = '';
+                item.style.left = `calc(50% - ${currentItemW / 2}px + ${pos}px)`;
+            });
+        }
+
+        carousel.querySelector('.prev')?.addEventListener('click', () => {
+            current = (current - 1 + n) % n;
+            update();
+        });
+
+        carousel.querySelector('.next')?.addEventListener('click', () => {
+            current = (current + 1) % n;
+            update();
+        });
+
+        // ── Zones de swipe ────────────────────────
+        // ── Zones de swipe ────────────────────────
+        const zoneLeft = wrapper.querySelector('.swipe-zone-left');
+        const zoneRight = wrapper.querySelector('.swipe-zone-right');
+
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        function handleSwipe(startX, endX) {
+            const diff = startX - endX;
+            if (Math.abs(diff) > 30) {
+                if (diff > 0) {
+                    current = (current + 1) % n;
+                } else {
+                    current = (current - 1 + n) % n;
+                }
+                update();
+            }
+        }
+
+        // ── Touch mobile ──────────────────────────
+        wrapper.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
+        }, { passive: true });
+
+        wrapper.addEventListener('touchend', e => {
+            const endX = e.changedTouches[0].screenX;
+            const endY = e.changedTouches[0].screenY;
+            const diffY = Math.abs(touchStartY - endY);
+
+            // Ignore si c'est un scroll vertical
+            if (diffY > 50) return;
+
+            handleSwipe(touchStartX, endX);
+        }, { passive: true });
+
+        // ── Clic zones desktop ────────────────────
+        zoneLeft.addEventListener('mousedown', e => e.preventDefault());
+        zoneRight.addEventListener('mousedown', e => e.preventDefault());
+
+        zoneLeft.addEventListener('click', () => {
+            current = (current - 1 + n) % n;
+            update();
+        });
+
+        zoneRight.addEventListener('click', () => {
+            current = (current + 1) % n;
+            update();
+        });
+        update();
+    }
+
+    initCarousel('fitness', {{ fitness_start }});
+    initCarousel('dance', {{ dance_start }});
+
+    // function centerItem(index, animate = true) {
+    //     items.forEach((item, i) => {
+    //         item.classList.toggle('active', i === index);
+    //     });
+
+    //     const activeItem = items[index];
+    //     const trackWidth = track.parentElement.offsetWidth; // largeur du carousel
+    //     const itemWidth = activeItem.offsetWidth;
+    //     const scrollTarget = activeItem.offsetLeft - (trackWidth / 2) + (itemWidth / 2);
+
+    //     track.scrollTo({
+    //         left: scrollTarget,
+    //         behavior: animate ? 'smooth' : 'instant'
+    //     });
+    // }
+</script>
+
+<script async src="https://www.tiktok.com/embed.js"></script>
+{% endblock %}

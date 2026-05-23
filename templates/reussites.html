@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Réussites — 1 Kilo en Moins{% endblock %}
+
+{% block content %}
+
+<!-- ── SECTION 1 : MES RÉUSSITES ── -->
+<section class="reussites-hero">
+    <h1 class="hero-title bo">Mes Réussites</h1>
+</section>
+
+<section class="mes-reussites-section">
+    <div class="reussites-carousel-wrapper">
+        <div class="reussites-carousel" id="mes-reussites-carousel">
+
+            {% for reussite in mes_reussites %}
+            <div class="reussite-card">
+
+                <!-- Mini slider interne -->
+                <div class="card-media-slider">
+                    <div class="card-media-track">
+                        {% for media in reussite.medias %}
+                        <div class="card-media-item">
+                            {% if media.type_media == 'photo' %}
+                            <img src="{{ media.photo_url }}" alt="{{ reussite.titre }}" />
+                            {% elif media.type_media == 'tiktok' %}
+                            <iframe src="https://www.tiktok.com/embed/v2/{{ media.tiktok_id }}" frameborder="0"
+                                scrolling="no" allowfullscreen>
+                            </iframe>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Dots restent dans le slider -->
+                    {% if reussite.medias|length > 1 %}
+                    <div class="card-dots">
+                        {% for media in reussite.medias %}
+                        <span class="dot {% if forloop.first %}active{% endif %}"></span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Flèches EN DEHORS du slider mais dans la card -->
+                {% if reussite.medias|length > 1 %}
+                <button class="card-prev">&#8249;</button>
+                <button class="card-next">&#8250;</button>
+                {% endif %}
+
+                <!-- Infos -->
+                <div class="card-info">
+                    <span class="card-dot-green"></span>
+                    <p class="card-description">
+                        <strong>{{ reussite.date_reussite|date:"d M Y" }}</strong> —
+                        {{ reussite.titre }}
+                    </p>
+                </div>
+
+            </div>
+            {% empty %}
+            <p class="empty-msg">Aucune réussite pour le moment.</p>
+            {% endfor %}
+
+        </div>
+
+        {% if mes_reussites.count > 1 %}
+        <div class="carousel-btns">
+            <button class="btn-circle" id="reussites-prev">&#8249;</button>
+            <button class="btn-circle" id="reussites-next">&#8250;</button>
+        </div>
+        {% endif %}
+
+    </div>
+</section>
+
+<!-- ── SECTION 2 : CONTACT ── -->
+<section class="contact-section">
+    <p class="contact-text">
+        Motives aussi d'autres personnes en partageant<br />
+        tes réussites avec moi 😊 !
+    </p>
+    <a href="mailto:ton@email.com" class="btn-green">CONTACT MOI</a>
+</section>
+
+<!-- ── SECTION 3 : RÉUSSITES VISITEURS ── -->
+{% if reussites_visiteurs %}
+<section class="visiteurs-section">
+    <div class="visiteurs-grid">
+        {% for reussite in reussites_visiteurs %}
+        <div class="visiteur-card">
+            {% if reussite.media %}
+            {% if reussite.media.type_media == 'photo' %}
+            <img src="{{ reussite.media.photo_url }}" alt="{{ reussite.nom }}" class="visiteur-media" />
+            {% elif reussite.media.type_media == 'tiktok' %}
+            <iframe src="https://www.tiktok.com/embed/v2/{{ reussite.media.tiktok_id }}" frameborder="0" scrolling="no"
+                allowfullscreen class="visiteur-media">
+            </iframe>
+            {% endif %}
+            {% else %}
+            <div class="visiteur-media" style="background:#eee;"></div>
+            {% endif %}
+
+            <div class="visiteur-info">
+                <div class="visiteur-text">
+                    <span class="visiteur-nom">@{{ reussite.nom }}</span>
+                    <span class="visiteur-desc">{{ reussite.titre }}</span>
+                </div>
+                {% if reussite.lien_post %}
+                <a href="{{ reussite.lien_post }}" target="_blank" class="visiteur-btn">&#8594;</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // ── Mini slider interne ───────────────────
+    // ── Mini slider interne ───────────────────
+    document.querySelectorAll('.reussite-card').forEach(card => {
+        const slider = card.querySelector('.card-media-slider');
+        const track = slider.querySelector('.card-media-track');
+        const items = track.querySelectorAll('.card-media-item');
+        const dots = slider.querySelectorAll('.dot');
+        if (items.length <= 1) return;
+
+        let current = 0;
+
+        function updateSlider() {
+            track.style.transform = `translateX(-${current * 100}%)`;
+            dots.forEach((d, i) => d.classList.toggle('active', i === current));
+        }
+
+        // Les flèches sont maintenant dans la card, pas dans le slider
+        card.querySelector('.card-prev')?.addEventListener('click', e => {
+            e.stopPropagation();
+            current = (current - 1 + items.length) % items.length;
+            updateSlider();
+        });
+
+        card.querySelector('.card-next')?.addEventListener('click', e => {
+            e.stopPropagation();
+            current = (current + 1) % items.length;
+            updateSlider();
+        });
+    });
+    // ── Carousel principal ────────────────────
+    const cards = document.querySelectorAll('.reussite-card');
+    let currentCard = 0;
+
+    function updateCards() {
+        cards.forEach((card, i) => {
+            const offset = i - currentCard;
+            card.classList.remove('active', 'left-1', 'right-1', 'hidden-item');
+
+            if (offset === 0) card.classList.add('active');
+            else if (offset === -1) card.classList.add('left-1');
+            else if (offset === 1) card.classList.add('right-1');
+            else card.classList.add('hidden-item');
+
+            card.style.left = `calc(50% - 200px + ${offset * 430}px)`;
+        });
+    }
+
+    document.getElementById('reussites-prev')?.addEventListener('click', () => {
+        currentCard = (currentCard - 1 + cards.length) % cards.length;
+        updateCards();
+    });
+
+    document.getElementById('reussites-next')?.addEventListener('click', () => {
+        currentCard = (currentCard + 1) % cards.length;
+        updateCards();
+    });
+
+    if (cards.length > 0) updateCards();
+</script>
+{% endblock %}

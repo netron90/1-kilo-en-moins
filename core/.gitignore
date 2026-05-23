@@ -1,0 +1,27 @@
+# Environnement virtuel
+env/
+venv/
+
+# Fichier de configuration sensible
+.env
+
+# Base de données locale
+db.sqlite3
+
+# Fichiers Python compilés
+__pycache__/
+*.pyc
+*.pyo
+
+# Fichiers statiques collectés
+staticfiles/
+
+# Médias uploadées (on les gèrera séparément)
+media/
+
+# VS Code
+.vscode/
+
+# Windows
+Thumbs.db
+desktop.ini

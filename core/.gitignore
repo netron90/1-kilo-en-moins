@@ -25,3 +25,6 @@ media/
 # Windows
 Thumbs.db
 desktop.ini
+
+admin_credential.txt
+*.txt

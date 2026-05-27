@@ -26,7 +26,7 @@ body {
     background: var(--dark);
     display: flex;
     align-items: center;
-    padding: 0 2rem;
+    padding: 2.8rem 2rem;
     height: 60px;
     position: sticky;
     top: 0;
@@ -101,15 +101,15 @@ body {
 }
 
 .hero-title {
-    font-size: 24px;
-    font-weight: 500;
+    font-size: 40px;
+    font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 2px;
 }
 
 .hero-sub {
-    font-size: 24px;
-    font-weight: 500;
+    font-size: 40px;
+    font-weight: 800;
     color: var(--green);
     text-transform: uppercase;
     letter-spacing: 2px;

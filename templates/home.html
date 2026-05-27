@@ -110,7 +110,19 @@
         Ce que je fais te motive ou t'aide à atteindre tes objectifs ?<br />
         Support moi 😊 !
     </p>
-    <a href="#" class="btn-green">Soutenir le projet</a>
+    <!-- <a href="#" class="btn-green">Me soutenir</a> -->
+
+    <div class="support-amounts">
+        <button class="amount-btn" onclick="openKkiapay(500)">
+            ☕ 500 FCFA
+        </button>
+        <button class="amount-btn" onclick="openKkiapay(1000)">
+            🍽️ 1 000 FCFA
+        </button>
+        <button class="amount-btn" onclick="openKkiapay(2500)">
+            🙏 2 500 FCFA
+        </button>
+    </div>
 </section>
 
 {% endblock %}
@@ -401,6 +413,28 @@
     //         behavior: animate ? 'smooth' : 'instant'
     //     });
     // }
+
+    // ── KKiaPay ───────────────────────────────
+    function openKkiapay(amount) {
+        openKkiapayWidget({
+            amount: amount,
+            api_key: "718edce059a511f18026c3fc719289c5",
+            sandbox: true,  // ← met false quand tu es prêt pour la production
+            name: "1 Kilo en Moins",
+            callback: "https://1-kilo-en-moins-production.up.railway.app",
+        });
+    }
+
+    // Confirmation de paiement
+    window.addEventListener('kkiapay-transaction-success', function (response) {
+        alert("Merci pour ton soutien ! 🙏");
+        console.log(response);
+    });
+
+    window.addEventListener('kkiapay-transaction-failed', function (response) {
+        alert("Le paiement a échoué. Réessaie !");
+        console.log(response);
+    });
 </script>
 
 <script async src="https://www.tiktok.com/embed.js"></script>

@@ -734,3 +734,30 @@ body {
         grid-template-columns: 1fr;
     }
 }
+
+/* ── Support amounts ─────────────────────── */
+.support-amounts {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+}
+
+.amount-btn {
+    background: transparent;
+    color: var(--white);
+    border: 2px solid var(--green);
+    padding: 10px 1.5rem;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+}
+
+.amount-btn:hover {
+    background: var(--green);
+    color: var(--white);
+}

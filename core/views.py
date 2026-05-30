@@ -54,49 +54,13 @@ def home(request):
 
 
 def reussites(request):
-    def get_tiktok_id(url):
-        try:
-            return url.split('/video/')[-1].split('?')[0]
-        except:
-            return ''
-
-    mes_reussites_qs = Reussite.objects.filter(
+    mes_reussites = Reussite.objects.filter(
         active=True, type='moi'
     ).prefetch_related('medias')
 
-    reussites_visiteurs_qs = Reussite.objects.filter(
+    reussites_visiteurs = Reussite.objects.filter(
         active=True, type='visiteur'
     ).prefetch_related('medias')
-
-    # Prépare les données avec les IDs TikTok déjà extraits
-    mes_reussites = []
-    for r in mes_reussites_qs:
-        medias = []
-        for m in r.medias.all():
-            medias.append({
-                'type_media': m.type_media,
-                'photo_url': m.photo.url if m.photo else None,
-                'tiktok_id': get_tiktok_id(m.tiktok_url) if m.tiktok_url else '',
-            })
-        mes_reussites.append({
-            'titre': r.titre,
-            'date_reussite': r.date_reussite,
-            'medias': medias,
-        })
-
-    reussites_visiteurs = []
-    for r in reussites_visiteurs_qs:
-        media = r.medias.first()
-        reussites_visiteurs.append({
-            'nom': r.nom,
-            'titre': r.titre,
-            'lien_post': r.lien_post,
-            'media': {
-                'type_media': media.type_media if media else None,
-                'photo_url': media.photo.url if media and media.photo else None,
-                'tiktok_id': get_tiktok_id(media.tiktok_url) if media and media.tiktok_url else '',
-            } if media else None,
-        })
 
     return render(request, 'reussites.html', {
         'mes_reussites': mes_reussites,

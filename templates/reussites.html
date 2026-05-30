@@ -7,7 +7,7 @@
 
 <!-- ── SECTION 1 : MES RÉUSSITES ── -->
 <section class="reussites-hero">
-    <h1 class="hero-title bo">Mes Réussites</h1>
+    <h1 class="hero-title">Mes Réussites</h1>
 </section>
 
 <section class="mes-reussites-section">
@@ -20,31 +20,31 @@
                 <!-- Mini slider interne -->
                 <div class="card-media-slider">
                     <div class="card-media-track">
-                        {% for media in reussite.medias %}
+                        {% for media in reussite.medias.all %}
                         <div class="card-media-item">
                             {% if media.type_media == 'photo' %}
-                            <img src="{{ media.photo_url }}" alt="{{ reussite.titre }}" />
+                            <img src="{{ media.photo.url }}" alt="{{ reussite.titre }}" />
                             {% elif media.type_media == 'tiktok' %}
-                            <iframe src="https://www.tiktok.com/embed/v2/{{ media.tiktok_id }}" frameborder="0"
-                                scrolling="no" allowfullscreen>
+                            <iframe src="https://www.tiktok.com/embed/v2/{{ media.tiktok_url|slice:'/video/'|last }}"
+                                frameborder="0" scrolling="no" allowfullscreen>
                             </iframe>
                             {% endif %}
                         </div>
                         {% endfor %}
                     </div>
 
-                    <!-- Dots restent dans le slider -->
-                    {% if reussite.medias|length > 1 %}
+                    <!-- Dots dans le slider -->
+                    {% if reussite.medias.count > 1 %}
                     <div class="card-dots">
-                        {% for media in reussite.medias %}
+                        {% for media in reussite.medias.all %}
                         <span class="dot {% if forloop.first %}active{% endif %}"></span>
                         {% endfor %}
                     </div>
                     {% endif %}
                 </div>
 
-                <!-- Flèches EN DEHORS du slider mais dans la card -->
-                {% if reussite.medias|length > 1 %}
+                <!-- Flèches EN DEHORS du slider -->
+                {% if reussite.medias.count > 1 %}
                 <button class="card-prev">&#8249;</button>
                 <button class="card-next">&#8250;</button>
                 {% endif %}
@@ -90,17 +90,19 @@
     <div class="visiteurs-grid">
         {% for reussite in reussites_visiteurs %}
         <div class="visiteur-card">
-            {% if reussite.media %}
-            {% if reussite.media.type_media == 'photo' %}
-            <img src="{{ reussite.media.photo_url }}" alt="{{ reussite.nom }}" class="visiteur-media" />
-            {% elif reussite.media.type_media == 'tiktok' %}
-            <iframe src="https://www.tiktok.com/embed/v2/{{ reussite.media.tiktok_id }}" frameborder="0" scrolling="no"
-                allowfullscreen class="visiteur-media">
+            {% with media=reussite.medias.first %}
+            {% if media %}
+            {% if media.type_media == 'photo' %}
+            <img src="{{ media.photo.url }}" alt="{{ reussite.nom }}" class="visiteur-media" />
+            {% elif media.type_media == 'tiktok' %}
+            <iframe src="https://www.tiktok.com/embed/v2/{{ media.tiktok_url|slice:'/video/'|last }}" frameborder="0"
+                scrolling="no" allowfullscreen class="visiteur-media">
             </iframe>
             {% endif %}
             {% else %}
             <div class="visiteur-media" style="background:#eee;"></div>
             {% endif %}
+            {% endwith %}
 
             <div class="visiteur-info">
                 <div class="visiteur-text">
@@ -122,7 +124,6 @@
 {% block extra_js %}
 <script>
     // ── Mini slider interne ───────────────────
-    // ── Mini slider interne ───────────────────
     document.querySelectorAll('.reussite-card').forEach(card => {
         const slider = card.querySelector('.card-media-slider');
         const track = slider.querySelector('.card-media-track');
@@ -137,7 +138,6 @@
             dots.forEach((d, i) => d.classList.toggle('active', i === current));
         }
 
-        // Les flèches sont maintenant dans la card, pas dans le slider
         card.querySelector('.card-prev')?.addEventListener('click', e => {
             e.stopPropagation();
             current = (current - 1 + items.length) % items.length;
@@ -150,6 +150,7 @@
             updateSlider();
         });
     });
+
     // ── Carousel principal ────────────────────
     const cards = document.querySelectorAll('.reussite-card');
     let currentCard = 0;

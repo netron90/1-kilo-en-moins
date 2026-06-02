@@ -109,3 +109,6 @@ STORAGES = {
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CSRF_TRUSTED_ORIGINS = ['https://1-kilo-en-moins-production.up.railway.app']
+
+FEDAPAY_SECRET_KEY = config('FEDAPAY_SECRET_KEY')
+FEDAPAY_ENVIRONMENT = config('FEDAPAY_ENVIRONMENT', default='sandbox')

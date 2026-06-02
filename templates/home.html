@@ -113,13 +113,13 @@
     <!-- <a href="#" class="btn-green">Me soutenir</a> -->
 
     <div class="support-amounts">
-        <button class="amount-btn" onclick="openKkiapay(500)">
+        <button class="amount-btn" onclick="openFedaPay(500)">
             ☕ 500 FCFA
         </button>
-        <button class="amount-btn" onclick="openKkiapay(1000)">
+        <button class="amount-btn" onclick="openFedaPay(1000)">
             🍽️ 1 000 FCFA
         </button>
-        <button class="amount-btn" onclick="openKkiapay(2500)">
+        <button class="amount-btn" onclick="openFedaPay(2500)">
             🙏 2 500 FCFA
         </button>
     </div>
@@ -415,26 +415,59 @@
     // }
 
     // ── KKiaPay ───────────────────────────────
-    function openKkiapay(amount) {
-        openKkiapayWidget({
-            amount: amount,
-            api_key: "718edce059a511f18026c3fc719289c5",
-            sandbox: true,  // ← met false quand tu es prêt pour la production
-            name: "1 Kilo en Moins",
-            callback: "https://1-kilo-en-moins-production.up.railway.app",
+    // function openFedaPay(amount) {
+    //     openKkiapayWidget({
+    //         amount: amount,
+    //         api_key: "718edce059a511f18026c3fc719289c5",
+    //         sandbox: true,  // ← met false quand tu es prêt pour la production
+    //         name: "1 Kilo en Moins",
+    //         callback: "https://1-kilo-en-moins-production.up.railway.app",
+    //     });
+    // }
+
+    // // Confirmation de paiement
+    // window.addEventListener('kkiapay-transaction-success', function (response) {
+    //     alert("Merci pour ton soutien ! 🙏");
+    //     console.log(response);
+    // });
+
+    // window.addEventListener('kkiapay-transaction-failed', function (response) {
+    //     alert("Le paiement a échoué. Réessaie !");
+    //     console.log(response);
+    // });
+
+    // ── FedaPay ───────────────────────────────
+
+    // ── FedaPay Correctifié ───────────────────────────────
+    function openFedaPay(amount) {
+        // 1. On crée une instance du widget et on la stocke dans une variable
+        let widget = FedaPay.init({
+            public_key: 'pk_live_kcVLiWi63jRKEGUBQapJ9dVr',
+            environment: 'live',
+            transaction: {
+                amount: amount,
+                description: 'Soutien à 1 Kilo en Moins 😊',
+                currency: { iso: 'XOF' }
+            },
+            // customer: {
+            //     firstname: 'Donateur',
+            //     lastname: 'Anonyme',
+            //     email: 'soutien@1kiloenmoins.com'
+            // },
+            onComplete: function (response) {
+                if (response.status === 'approved') {
+                    alert("Merci infiniment pour ton soutien ! ✨");
+                    window.location.href = "https://1-kilo-en-moins-production.up.railway.app";
+                } else {
+                    alert("Le paiement n'a pas pu être approuvé. Réessaie !");
+                }
+            }
         });
+
+        // 2. C'est sur cette instance précise qu'on appelle .open()
+        widget.open();
     }
 
-    // Confirmation de paiement
-    window.addEventListener('kkiapay-transaction-success', function (response) {
-        alert("Merci pour ton soutien ! 🙏");
-        console.log(response);
-    });
-
-    window.addEventListener('kkiapay-transaction-failed', function (response) {
-        alert("Le paiement a échoué. Réessaie !");
-        console.log(response);
-    });
 </script>
 
 <script async src="https://www.tiktok.com/embed.js"></script>

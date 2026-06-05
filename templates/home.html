@@ -104,6 +104,67 @@
     </ul>
 </section>
 
+<!-- PLAN PERSONNALISÉ -->
+<section class="plan-section">
+    <div class="plan-container">
+        <h2 class="plan-title">🎯 Génère ton plan personnalisé</h2>
+        <p class="plan-subtitle">
+            Décris ton objectif et obtiens un plan sur mesure pour 1 mois
+        </p>
+
+        <!-- Formulaire -->
+        <div class="plan-form" id="plan-form">
+            <div class="form-group">
+                <label for="objectif">Ton objectif global *</label>
+                <input type="text" id="objectif" placeholder="Ex: Perdre 2kg en juin, courir 5km sans m'arrêter..."
+                    class="plan-input" />
+            </div>
+            <div class="form-group">
+                <label for="contraintes">
+                    Contraintes ou problèmes de santé
+                    <span style="color:#aaa; font-weight:400;">(optionnel)</span>
+                </label>
+                <input type="text" id="contraintes" placeholder="Ex: Mal aux genoux, dos fragile, asthme..."
+                    class="plan-input" />
+            </div>
+            <button class="btn-green" id="btn-generer" onclick="genererPlan()">
+                ✨ Générer mon plan gratuit
+            </button>
+        </div>
+
+        <!-- Loader -->
+        <div class="plan-loader hidden" id="plan-loader">
+            <div class="loader-spinner"></div>
+            <p>Génération de ton plan personnalisé en cours...</p>
+        </div>
+
+        <!-- Résultat -->
+        <div class="plan-result hidden" id="plan-result">
+
+            <!-- Aperçu visible -->
+            <div class="plan-preview" id="plan-apercu"></div>
+
+            <!-- Zone floutée -->
+            <div class="plan-blurred">
+                <div class="plan-blurred-content">
+                    <p>📋 La suite de ton plan est prête !</p>
+                    <p class="plan-blurred-hint">
+                        Planning jour par jour · Conseils personnalisés · Message de motivation
+                    </p>
+                </div>
+                <div class="plan-paywall">
+                    <p class="plan-prix" id="plan-prix-texte"></p>
+                    <button class="btn-green btn-payer" id="btn-payer" onclick="payerPlan()">
+                        🔓 Débloquer et télécharger le PDF
+                    </button>
+                    <p class="plan-secure">🔒 Paiement sécurisé via FedaPay</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
 <!-- SUPPORT -->
 <section class="support-section">
     <p class="support-text">
@@ -455,17 +516,139 @@
             //     email: 'soutien@1kiloenmoins.com'
             // },
             onComplete: function (response) {
-                if (response.status === 'approved') {
+                // if (response.status === 'approved') {
+                // alert("Merci infiniment pour ton soutien ! ✨");
+                // window.location.href = "https://1-kilo-en-moins-production.up.railway.app";
+                // } else {
+                //     alert("Le paiement n'a pas pu être approuvé. Réessaie !");
+                // }
+
+                let status = 'unknown';
+
+                // Extraction propre du statut de la transaction
+                if (response) {
+                    if (typeof response === 'string') {
+                        status = response;
+                    } else if (response.status) {
+                        status = response.status;
+                    } else if (response.transaction && response.transaction.status) {
+                        status = response.transaction.status;
+                    }
+                }
+
+                // NETTOYAGE : On supprime 'unknown'. Seuls les vrais succès passent.
+                if (status === 'approved' || status === 'successful') {
                     alert("Merci infiniment pour ton soutien ! ✨");
                     window.location.href = "https://1-kilo-en-moins-production.up.railway.app";
                 } else {
-                    alert("Le paiement n'a pas pu être approuvé. Réessaie !");
+                    alert("Le paiement n'a pas pu être approuvé.");
                 }
             }
         });
 
         // 2. C'est sur cette instance précise qu'on appelle .open()
         widget.open();
+    }
+
+    // ── Plan personnalisé ─────────────────────
+    let prixPlan = 500;
+
+    function genererPlan() {
+        const objectif = document.getElementById('objectif').value.trim();
+        const contraintes = document.getElementById('contraintes').value.trim();
+
+        if (!objectif) {
+            alert('Merci de décrire ton objectif !');
+            return;
+        }
+
+        document.getElementById('plan-loader').classList.remove('hidden');
+        document.getElementById('plan-result').classList.add('hidden');
+        document.getElementById('plan-form').classList.add('hidden');
+
+        fetch('/generer-plan/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({ objectif, contraintes })
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    prixPlan = data.prix;
+                    document.getElementById('plan-apercu').textContent = data.apercu;
+                    document.getElementById('plan-prix-texte').textContent =
+                        `Débloquer le plan complet — ${data.prix} FCFA`;
+                    document.getElementById('plan-result').classList.remove('hidden');
+                } else {
+                    alert('Erreur lors de la génération. Réessaie !');
+                    document.getElementById('plan-form').classList.remove('hidden');
+                }
+            })
+            .catch(() => {
+                alert('Erreur de connexion. Réessaie !');
+                document.getElementById('plan-form').classList.remove('hidden');
+            })
+            .finally(() => {
+                document.getElementById('plan-loader').classList.add('hidden');
+            });
+    }
+
+    function payerPlan() {
+        const objectif = document.getElementById('objectif').value.trim();
+        const montant = (typeof prixPlan !== 'undefined') ? prixPlan : 500;
+
+        let widget = FedaPay.init({
+            public_key: 'pk_live_kcVLiWi63jRKEGUBQapJ9dVr', // À remplacer par pk_live_... en production
+            environment: 'live', // À remplacer par 'live' en production
+            transaction: {
+                amount: montant,
+                description: `Plan 1 mois personnalisé : ${objectif}`,
+                currency: { iso: 'XOF' }
+            },
+            onComplete: function (response) {
+                let status = 'unknown';
+
+                // Extraction propre du statut de la transaction
+                if (response) {
+                    if (typeof response === 'string') {
+                        status = response;
+                    } else if (response.status) {
+                        status = response.status;
+                    } else if (response.transaction && response.transaction.status) {
+                        status = response.transaction.status;
+                    }
+                }
+
+                // NETTOYAGE : On supprime 'unknown'. Seuls les vrais succès passent.
+                if (status === 'approved' || status === 'successful') {
+                    window.location.href = "/telecharger-pdf/";
+                    alert("Vous venez de franchir le premier pas vers la réussite 😎.\nLa RIGUEUR et la CONSTANCE dans ce plan généré vous feront dépasser vos limites et obtenir de vrais résultats ! ✨");
+                } else {
+                    alert("Le paiement n'a pas pu être approuvé.");
+                }
+            }
+        });
+
+        widget.open();
+    }
+
+    window.payerPlan = payerPlan;
+
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            document.cookie.split(';').forEach(cookie => {
+                const c = cookie.trim();
+                if (c.startsWith(name + '=')) {
+                    cookieValue = decodeURIComponent(c.substring(name.length + 1));
+                }
+            });
+        }
+        return cookieValue;
     }
 
 </script>

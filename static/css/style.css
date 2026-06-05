@@ -761,3 +761,188 @@ body {
     background: var(--green);
     color: var(--white);
 }
+
+/* ── Plan personnalisé ───────────────────── */
+.plan-section {
+    padding: 4rem 2rem;
+    background: linear-gradient(135deg, #1a1a1a 0%, #0d3320 50%, #1a4a2e 100%);
+    margin-top: 3rem;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Effet de particules en arrière-plan */
+.plan-section::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at 30% 50%, rgba(58, 170, 92, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 70% 50%, rgba(58, 170, 92, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.plan-container {
+    max-width: 700px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+.plan-title {
+    font-size: 36px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 0.5rem;
+    color: var(--white);
+}
+
+.plan-subtitle {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 14px;
+    margin-bottom: 2.5rem;
+}
+
+.plan-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(58, 170, 92, 0.3);
+    border-radius: 16px;
+    padding: 2rem;
+}
+
+.form-group label {
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.plan-input {
+    padding: 12px 16px;
+    border: 1px solid rgba(58, 170, 92, 0.4);
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: 'Segoe UI', sans-serif;
+    transition: border 0.2s, background 0.2s;
+    outline: none;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--white);
+}
+
+.plan-input::placeholder {
+    color: rgba(255, 255, 255, 0.35);
+}
+
+.plan-input:focus {
+    border-color: var(--green);
+    background: rgba(255, 255, 255, 0.12);
+}
+
+/* Loader */
+.plan-loader {
+    text-align: center;
+    padding: 2rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.loader-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    border-top-color: var(--green);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Résultat */
+.plan-result {
+    margin-top: 2rem;
+    border: 1px solid rgba(58, 170, 92, 0.3);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.plan-preview {
+    padding: 1.5rem;
+    font-size: 14px;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.9);
+    max-height: 350px;
+    overflow: hidden;
+}
+
+/* Zone floutée */
+.plan-blurred {
+    position: relative;
+    background: rgba(255, 255, 255, 0.04);
+    padding: 1.5rem;
+    border-top: 1px solid rgba(58, 170, 92, 0.2);
+}
+
+.plan-blurred-content {
+    filter: blur(4px);
+    user-select: none;
+    pointer-events: none;
+    font-size: 14px;
+    line-height: 1.8;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 1rem;
+}
+
+.plan-paywall {
+    text-align: center;
+    padding: 1.5rem;
+    background: rgba(58, 170, 92, 0.1);
+    border-radius: 12px;
+    border: 1px solid rgba(58, 170, 92, 0.4);
+    margin-top: 1rem;
+}
+
+.plan-prix {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 1rem;
+}
+
+.plan-secure {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.4);
+    margin-top: 0.75rem;
+}
+
+.plan-blurred-hint {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+@media (max-width: 768px) {
+    .plan-section {
+        padding: 2.5rem 1rem;
+    }
+
+    .plan-form {
+        padding: 1.5rem;
+    }
+}
+
+/* ── Utilitaires ─────────────────────────── */
+.hidden {
+    display: none !important;
+}

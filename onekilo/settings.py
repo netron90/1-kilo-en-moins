@@ -64,9 +64,14 @@ TEMPLATES = [{
 
 WSGI_APPLICATION = 'onekilo.wsgi.application'
 
-DATABASE_URL = config('DATABASE_URL', default=None)
+# 1. On récupère la variable d'environnement (si elle n'existe pas, default='' garantit une chaîne vide)
+DATABASE_URL = config('DATABASE_URL', default='')
+
+#2. On bascule dynamiquement selon la présence de l'URL
 if DATABASE_URL:
-    DATABASES = {'default': dj_database_url.parse(DATABASE_URL)}
+    DATABASES = {
+        'default': dj_database_url.parse(DATABASE_URL)
+    }
 else:
     DATABASES = {
         'default': {

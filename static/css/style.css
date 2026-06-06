@@ -292,7 +292,7 @@ body {
     background: var(--dark);
     padding: 3rem 2rem;
     text-align: center;
-    margin-top: 3rem;
+    /* margin-top: 3rem; */
     margin-bottom: 0;
 }
 

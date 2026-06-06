@@ -583,7 +583,8 @@
                         `Débloquer le plan complet — ${data.prix} FCFA`;
                     document.getElementById('plan-result').classList.remove('hidden');
                 } else {
-                    alert('Erreur lors de la génération. Réessaie !');
+                    // alert('Erreur lors de la génération. Serveur actuellement indisponible. Réessaie plus tard !');
+                    alert(data.message || 'Erreur lors de la génération. Veuillez réessayer plus tard.');
                     document.getElementById('plan-form').classList.remove('hidden');
                 }
             })
@@ -595,6 +596,7 @@
                 document.getElementById('plan-loader').classList.add('hidden');
             });
     }
+
 
     function payerPlan() {
         const objectif = document.getElementById('objectif').value.trim();
@@ -624,8 +626,8 @@
 
                 // NETTOYAGE : On supprime 'unknown'. Seuls les vrais succès passent.
                 if (status === 'approved' || status === 'successful') {
-                    window.location.href = "/telecharger-pdf/";
                     alert("Vous venez de franchir le premier pas vers la réussite 😎.\nLa RIGUEUR et la CONSTANCE dans ce plan généré vous feront dépasser vos limites et obtenir de vrais résultats ! ✨");
+                    window.location.href = "/telecharger-pdf/";
                 } else {
                     alert("Le paiement n'a pas pu être approuvé.");
                 }

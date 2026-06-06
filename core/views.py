@@ -25,7 +25,7 @@ import urllib.parse
 from django.contrib import messages
 # Importe ton exception de sécurité Gemini si tu utilises le SDK google-generativeai
 import google.api_core.exceptions
-
+from django.views.decorators.csrf import csrf_exempt
 
 def reorder_around_active(videos, active_index):
     """Réorganise la liste pour que la vidéo active soit au centre"""
@@ -197,6 +197,7 @@ def reussites(request):
 #     return JsonResponse({'success': False, 'error': 'Méthode non autorisée'}, status=405)
 
 # YOUTUBE AVEC LIEN VERS DES RECHERCHES VIDEOS
+@csrf_exempt
 def generer_plan(request):
     if request.method == 'POST':
         try:

@@ -20,13 +20,13 @@
                 <!-- Mini slider interne -->
                 <div class="card-media-slider">
                     <div class="card-media-track">
-                        {% for media in reussite.medias.all %}
+                        {% for media in reussite.medias %}
                         <div class="card-media-item">
                             {% if media.type_media == 'photo' %}
-                            <img src="{{ media.photo.url }}" alt="{{ reussite.titre }}" />
+                            <img src="{{ media.photo_url }}" alt="{{ reussite.titre }}" />
                             {% elif media.type_media == 'tiktok' %}
-                            <iframe src="https://www.tiktok.com/embed/v2/{{ media.tiktok_url|slice:'/video/'|last }}"
-                                frameborder="0" scrolling="no" allowfullscreen>
+                            <iframe src="https://www.tiktok.com/embed/v2/{{ media.tiktok_id }}" frameborder="0"
+                                scrolling="no" allowfullscreen>
                             </iframe>
                             {% endif %}
                         </div>
@@ -34,17 +34,17 @@
                     </div>
 
                     <!-- Dots dans le slider -->
-                    {% if reussite.medias.count > 1 %}
+                    {% if reussite.medias_count > 1 %}
                     <div class="card-dots">
-                        {% for media in reussite.medias.all %}
+                        {% for media in reussite.medias %}
                         <span class="dot {% if forloop.first %}active{% endif %}"></span>
                         {% endfor %}
                     </div>
                     {% endif %}
                 </div>
 
-                <!-- Flèches EN DEHORS du slider -->
-                {% if reussite.medias.count > 1 %}
+                <!-- Flèches EN DEHORS du slider mais dans la card -->
+                {% if reussite.medias_count > 1 %}
                 <button class="card-prev">&#8249;</button>
                 <button class="card-next">&#8250;</button>
                 {% endif %}
@@ -65,7 +65,7 @@
 
         </div>
 
-        {% if mes_reussites.count > 1 %}
+        {% if mes_reussites|length > 1 %}
         <div class="carousel-btns">
             <button class="btn-circle" id="reussites-prev">&#8249;</button>
             <button class="btn-circle" id="reussites-next">&#8250;</button>
@@ -90,19 +90,17 @@
     <div class="visiteurs-grid">
         {% for reussite in reussites_visiteurs %}
         <div class="visiteur-card">
-            {% with media=reussite.medias.first %}
-            {% if media %}
-            {% if media.type_media == 'photo' %}
-            <img src="{{ media.photo.url }}" alt="{{ reussite.nom }}" class="visiteur-media" />
-            {% elif media.type_media == 'tiktok' %}
-            <iframe src="https://www.tiktok.com/embed/v2/{{ media.tiktok_url|slice:'/video/'|last }}" frameborder="0"
-                scrolling="no" allowfullscreen class="visiteur-media">
+            {% if reussite.media %}
+            {% if reussite.media.type_media == 'photo' %}
+            <img src="{{ reussite.media.photo_url }}" alt="{{ reussite.nom }}" class="visiteur-media" />
+            {% elif reussite.media.type_media == 'tiktok' %}
+            <iframe src="https://www.tiktok.com/embed/v2/{{ reussite.media.tiktok_id }}" frameborder="0" scrolling="no"
+                allowfullscreen class="visiteur-media">
             </iframe>
             {% endif %}
             {% else %}
             <div class="visiteur-media" style="background:#eee;"></div>
             {% endif %}
-            {% endwith %}
 
             <div class="visiteur-info">
                 <div class="visiteur-text">
@@ -151,7 +149,7 @@
         });
     });
 
-    // ── Carousel principal ────────────────────
+    // ── Carousel principal mes réussites ──────
     const cards = document.querySelectorAll('.reussite-card');
     let currentCard = 0;
 

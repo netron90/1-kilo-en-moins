@@ -361,20 +361,32 @@ IMPORTANT SÉCURITÉ : Si l'objectif ou les contraintes contiennent des insultes
 
     return JsonResponse({'success': False, 'error': 'Méthode non autorisée'}, status=405)
 
+@csrf_exempt
+def valider_paiement(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            status = data.get('status', '')
+            if status in ['approved', 'successful']:
+                request.session['paiement_plan_valide'] = True
+                return JsonResponse({'success': True})
+        except:
+            pass
+    return JsonResponse({'success': False})
 
 def telecharger_pdf(request):
-    status_payment = request.GET.get('status')
+     # Vérifie que le paiement a été validé via la session
+    paiement_valide = request.session.get('paiement_plan_valide', False)
     plan_texte = request.session.get('plan_complet')
     objectif = request.session.get('plan_objectif', 'Mon objectif')
 
-    paiement_valide = (status_payment in ['approved', 'successful']) or (plan_texte is not None)
+    # Redirige si pas de paiement validé ou pas de plan
+    if not paiement_valide or not plan_texte:
+        from django.shortcuts import redirect
+        return redirect('home')
 
-    if not paiement_valide:
-        return HttpResponse('Validation du paiement échouée.', status=403)
-
-    if not plan_texte:
-        plan_texte = "Votre plan est en cours de rechargement. Contactez le support si ce message persiste."
-
+    # Invalide le token après téléchargement
+    request.session['paiement_plan_valide'] = False
     buffer = io.BytesIO()
     doc = SimpleDocTemplate(
         buffer,

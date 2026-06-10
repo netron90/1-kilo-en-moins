@@ -627,7 +627,27 @@
                 // NETTOYAGE : On supprime 'unknown'. Seuls les vrais succès passent.
                 if (status === 'approved' || status === 'successful') {
                     alert("Vous venez de franchir le premier pas vers la réussite 😎.\nLa RIGUEUR et la CONSTANCE dans ce plan généré vous feront dépasser vos limites et obtenir de vrais résultats ! ✨");
-                    window.location.href = "/telecharger-pdf/";
+
+                    // Valide le paiement côté serveur avant de télécharger
+                    fetch('/valider-paiement/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': getCookie('csrftoken')
+                        },
+                        body: JSON.stringify({ status: status })
+                    })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success) {
+                                window.location.href = '/telecharger-pdf/';
+                            } else {
+                                alert('Erreur de validation. Contacte le support.');
+                            }
+                        })
+                        .catch(() => {
+                            alert('Erreur de connexion. Contacte le support.');
+                        });
                 } else {
                     alert("Le paiement n'a pas pu être approuvé.");
                 }

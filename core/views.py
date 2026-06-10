@@ -387,6 +387,7 @@ def telecharger_pdf(request):
 
     # Invalide le token après téléchargement
     request.session['paiement_plan_valide'] = False
+    
     buffer = io.BytesIO()
     doc = SimpleDocTemplate(
         buffer,

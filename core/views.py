@@ -110,7 +110,8 @@ def reussites(request):
             'medias_count': len(medias),
         })
 
-        reussites_visiteurs = []
+    # CORRECTION ICI : Alignement parfait à 4 espaces du bord pour le corps de la fonction
+    reussites_visiteurs = []
     for r in reussites_visiteurs_qs:
         media = r.medias.first()
         reussites_visiteurs.append({
@@ -387,7 +388,7 @@ def telecharger_pdf(request):
 
     # Invalide le token après téléchargement
     request.session['paiement_plan_valide'] = False
-    
+
     buffer = io.BytesIO()
     doc = SimpleDocTemplate(
         buffer,
